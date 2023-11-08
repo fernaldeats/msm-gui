@@ -36,4 +36,58 @@ class DirectorsController < ApplicationController
 
     render({ :template => "director_templates/eldest" })
   end
+
+  def create
+    # Retrieve the user's inputs from params
+      # params hash looks like this
+      # {"query_name"=>"1", "query_dob"=>"1996-12-04", "query_bio"=>"Asdf", "query_image"=>"AAA"}
+        # Create a record in the movie table
+    # Populate each column with the user input
+    dir = Director.new
+    dir.name = params.fetch("query_name")
+    dir.dob = params.fetch("query_dob")
+    dir.bio = params.fetch("query_bio")
+    dir.image = params.fetch("query_image")
+
+    dir.save
+
+    redirect_to("/directors")
+  
+    # Save
+    # Redirect the user back to the /directors URL
+  end
+
+def destroy
+  the_id = params.fetch("an_id")
+
+  matching_records = Director.where({ :id => the_id })
+
+  the_director = matching_records.at(0)
+
+  the_director.destroy
+
+  redirect_to("/directors")
+end
+
+def update
+  # Get ID out of params
+  dir_id = params.fetch("an_id")
+ 
+  # Lookup existing records
+  matching_records = Director.where({ :id => dir_id })
+  the_director = matching_records.at(0)
+  # Overwrite each column with user inputs
+  the_director.name = params.fetch("query_name")
+  the_director.dob = params.fetch("query_dob")
+  the_director.bio = params.fetch("query_bio")
+  the_director.image = params.fetch("query_image")
+
+  # Save
+  the_director.save
+
+  # Redirect to movie details page
+  redirect_to("/directors/#{the_director.id}")
+ 
+end
+
 end
